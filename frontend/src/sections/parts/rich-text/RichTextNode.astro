@@ -1,0 +1,73 @@
+---
+// One node of a rich text (RichText.astro): a list, a list item, a text block, a span with its mark, a text run, an
+// image, a code block or a table. Renders itself for the children. Inline output stays on one line: whitespace between
+// inline elements would show as a space.
+import { buildMarksTree } from '@portabletext/toolkit';
+import { highlight, codeLanguage } from './code';
+import CopyButton from '../copy/CopyButton.astro';
+import { CODE_COPY_LABEL } from '../copy/shared';
+import { blockCallout, blockEndpoint, blockTag, richTextClasses as c, safeHref, tableRows } from './shared';
+import { srcsetAttrs } from '../image/responsive';
+
+interface Props {
+  node: any;
+}
+const { node } = Astro.props;
+const type: string = node?._type;
+const listItem = type === 'block' && node.listItem;
+const styled = listItem && node.style && node.style !== 'normal';
+const inline = type === 'block' ? buildMarksTree(node) : [];
+const Tag = blockTag(node?.style);
+const List = node?.listItem === 'number' ? 'ol' : 'ul';
+const mark: string | undefined = type === '@span' ? node.markType : undefined;
+const Mark = mark === 'strong' ? 'strong' : mark === 'em' ? 'em' : mark === 'code' ? 'code' : mark === 'link' ? 'a' : null;
+const highlighted = type === 'sectionCode' && node.code ? highlight(node.code, node.language) : undefined;
+const table = type === 'sectionTable' ? tableRows(node.rows) : undefined;
+const callout = blockCallout(node);
+const endpoint = blockEndpoint(node);
+const hid: string | undefined = type === 'block' && !listItem ? node.__id : undefined;
+---
+
+{
+  type === '@list' ? (
+    <List>{node.children.map((child: any) => <Astro.self node={child} />)}</List>
+  ) : listItem ? (
+    <li>{styled ? <Astro.self node={{ ...node, listItem: undefined }} /> : inline.map((child) => <Astro.self node={child} />)}</li>
+  ) : callout ? (
+    <blockquote data-callout={callout}><p>{inline.map((child) => <Astro.self node={child} />)}</p></blockquote>
+  ) : type === 'block' ? (
+    <Tag id={hid} data-endpoint={endpoint}>{inline.map((child) => <Astro.self node={child} />)}</Tag>
+  ) : type === '@span' ? (
+    Mark === 'a' ? (
+      <a href={safeHref(node.markDef?.href)}>{node.children.map((child: any) => <Astro.self node={child} />)}</a>
+    ) : Mark ? (
+      <Mark>{node.children.map((child: any) => <Astro.self node={child} />)}</Mark>
+    ) : (
+      node.children.map((child: any) => <Astro.self node={child} />)
+    )
+  ) : type === '@text' ? (
+    node.text === '\n' ? <br /> : node.text
+  ) : type === 'image' && node.src ? (
+    node.caption ? (
+      <figure>
+        <img src={node.src} {...srcsetAttrs(node, 'prose')} alt={node.alt ?? ''} width={node.width} height={node.height} loading="lazy" decoding="async" />
+        <figcaption>{node.caption}</figcaption>
+      </figure>
+    ) : (
+      <img src={node.src} {...srcsetAttrs(node, 'prose')} alt={node.alt ?? ''} width={node.width} height={node.height} loading="lazy" decoding="async" />
+    )
+  ) : highlighted !== undefined ? (
+    <figure class={c.codeFigure} data-copy-scope>
+      {node.filename ? <figcaption class={c.codeTitle}>{node.filename}</figcaption> : null}
+      <pre tabindex="0" data-language={codeLanguage(node.language) ?? 'text'} data-copy-source><code set:html={highlighted} /></pre>
+      <CopyButton label={CODE_COPY_LABEL} class={c.codeCopy} />
+    </figure>
+  ) : table && table.head.length ? (
+    <table tabindex="0">
+      <thead>
+        <tr>{table.head.map((cell) => <th scope="col">{cell}</th>)}</tr>
+      </thead>
+      <tbody>{table.body.map((row) => <tr>{row.map((cell) => <td>{cell}</td>)}</tr>)}</tbody>
+    </table>
+  ) : null
+}

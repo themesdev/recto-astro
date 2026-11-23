@@ -1,0 +1,20 @@
+node_modules
+.env
+.env.*
+!.env.example
+.dev.vars
+.DS_Store
+*.tsbuildinfo
+
+# Astro and Wrangler (frontend/)
+frontend/dist
+frontend/.astro
+frontend/.wrangler
+.wrangler
+
+# Studio
+studio/dist
+studio/.sanity
+
+# QA scratch
+qa/tmp

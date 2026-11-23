@@ -1,0 +1,36 @@
+---
+// A row of short items moving slowly, with a pause button (WCAG 2.2.2); still and wrapped with reduced motion.
+import Icon from '../icon/Icon.astro';
+import { marqueeClasses as c, marqueeStyle } from './shared';
+
+interface Props {
+  items: string[];
+  label: string;
+}
+const { items, label } = Astro.props;
+---
+
+<div class={c.root} data-marquee>
+  <div class={c.head}>
+    <button type="button" class={c.pause} aria-pressed="false" aria-label={`Pause ${label}`} data-marquee-pause>
+      <Icon name="pause" size={20} class={c.pauseIcon} />
+      <Icon name="play" size={20} class={c.playIcon} />
+    </button>
+  </div>
+  <div class="s-marquee" style={marqueeStyle(items.length)}>
+    <div class="s-marquee-rail">
+      {
+        [false, true].map((clone) => (
+          <ul role="list" aria-label={clone ? undefined : label} class={clone ? `${c.list} ${c.clone}` : c.list} aria-hidden={clone ? 'true' : undefined} inert={clone}>
+            {items.map((item) => <li class={c.item}>{item}</li>)}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  import { initMarquee } from './reveal';
+  initMarquee();
+</script>

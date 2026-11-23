@@ -1,0 +1,31 @@
+---
+// One page of the blog index: the blog page's first section (its page header), the posts (the newest drawn large on
+// page one, rows of three after it) with page links, then the blog page's other sections (the newsletter).
+import SiteLayout from '../components/SiteLayout.astro';
+import PageBuilder from '../components/PageBuilder.astro';
+import Posts from '../sections/items/sections/posts/Posts.astro';
+import type { BlogData } from '../lib/views';
+
+interface Props {
+  data: BlogData;
+  preview?: boolean;
+}
+const { data, preview = false } = Astro.props;
+const { doc, page, pages, posts, first, rest } = data;
+const title = doc.title ?? 'Blog';
+---
+
+<SiteLayout
+  path={page === 1 ? '/blog/' : `/blog/page/${page}/`}
+  section="/blog/"
+  preview={preview}
+  title={page === 1 ? title : `${title}, page ${page}`}
+  description={page === 1 ? doc.description : doc.description ? `${doc.description} Page ${page}.` : undefined}
+  og="blog"
+  crumb={page === 1 ? undefined : `Page ${page}`}
+>
+  <PageBuilder sections={first ? [first] : []} />
+  {posts.length ? <Posts posts={posts} trailingSlash variant={page === 1 ? 'featured' : 'grid'} pagination={{ page, pages, href: '/blog/page/{page}/', firstHref: '/blog/' }} /> : null}
+  <PageBuilder sections={rest} />
+  <slot name="tools" slot="tools" />
+</SiteLayout>

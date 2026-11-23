@@ -1,0 +1,12 @@
+---
+// A grain or grid layer over a ground (shared.ts); the parent is relative and isolate. Opacity: effect.texture.opacity.
+import { textureClass, type TextureKind } from './shared';
+
+interface Props {
+  kind?: TextureKind;
+  class?: string;
+}
+const { kind = 'grain', class: className } = Astro.props;
+---
+
+<span class={textureClass(kind, className)} aria-hidden="true"></span>

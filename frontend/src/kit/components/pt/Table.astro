@@ -1,0 +1,22 @@
+---
+// A table from the Studio (the section library's sectionTable: rows of cells, the first row the header). It scrolls
+// sideways when it is wider than the column, by keyboard too (tabindex).
+import type { TypedObject } from 'astro-portabletext/types';
+import { tableRows } from '../../../sections/parts/rich-text/shared';
+
+interface Props {
+  node: TypedObject & { rows?: { cells?: (string | null)[] | null }[] | null };
+}
+const table = tableRows(Astro.props.node.rows);
+---
+
+{
+  table.head.length ? (
+    <table tabindex="0">
+      <thead>
+        <tr>{table.head.map((cell) => <th scope="col">{cell}</th>)}</tr>
+      </thead>
+      <tbody>{table.body.map((row) => <tr>{row.map((cell) => <td>{cell}</td>)}</tr>)}</tbody>
+    </table>
+  ) : null
+}

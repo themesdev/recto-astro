@@ -1,0 +1,12 @@
+---
+// One JSON-LD block (json-ld.ts): an object from a helper (siteJsonLd, articleJsonLd, pricingJsonLd …) or its text.
+// Put it in the page head, or anywhere in the HTML the server sends: crawlers read that, not what a script adds later.
+import { jsonLd } from './json-ld';
+
+interface Props {
+  data: object | string;
+}
+const { data } = Astro.props;
+---
+
+<script type="application/ld+json" is:inline set:html={jsonLd(data)} />

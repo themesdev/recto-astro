@@ -1,0 +1,10 @@
+---
+// The page document with slug "home" in the Studio.
+import CmsView from '../views/CmsView.astro';
+import { loadCmsPage } from '../lib/views';
+
+const data = await loadCmsPage('home');
+if (!data) throw new Error('No page with the slug "home": run pnpm seed, or create it in the Studio.');
+---
+
+<CmsView data={data} path="/" />

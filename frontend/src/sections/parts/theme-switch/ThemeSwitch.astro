@@ -1,0 +1,29 @@
+---
+// A light/dark switch: a toggle button (aria-pressed true while dark) that sets data-theme on <html> and remembers
+// it (shared.ts). Put THEME_INIT in <head> as well, so a saved choice applies before the first paint.
+import Icon from '../icon/Icon.astro';
+import { THEME_SWITCH_LABEL, themeSwitchClasses } from './shared';
+
+interface Props {
+  class?: string;
+}
+const c = themeSwitchClasses(Astro.props.class);
+---
+
+<button type="button" class={c.button} aria-pressed="false" data-theme-switch>
+  <span class="sr-only">{THEME_SWITCH_LABEL}</span>
+  <Icon name="moon" size={20} class={c.moon} />
+  <Icon name="sun" size={20} class={c.sun} />
+</button>
+
+<script>
+  import { isDarkNow, setTheme } from './shared';
+  const sync = () => document.querySelectorAll('[data-theme-switch]').forEach((b) => b.setAttribute('aria-pressed', String(isDarkNow())));
+  sync();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', sync);
+  document.addEventListener('click', (e) => {
+    if (!(e.target as Element).closest('[data-theme-switch]')) return;
+    setTheme(isDarkNow() ? 'light' : 'dark');
+    sync();
+  });
+</script>

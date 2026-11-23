@@ -1,0 +1,36 @@
+---
+// Eyebrow, heading and lead at the top of a section. The heading carries the id the section is labelled by.
+import { cn } from '../../recipes/cn';
+import { headClasses, type HeadAlign, type HeadSize } from './shared';
+
+interface Props {
+  eyebrow?: string | null;
+  heading: string;
+  lead?: string | null;
+  headingId: string;
+  as?: 'h1' | 'h2';
+  align?: HeadAlign;
+  /** h2 only: compact draws a smaller heading (bands); display an h2 at the display size (an editorial head). */
+  size?: HeadSize;
+  class?: string;
+}
+const { eyebrow, heading, lead, headingId, as: Tag = 'h2', align = 'start', size = 'section', class: className } = Astro.props;
+const c = headClasses(align, Tag === 'h1' ? 'display' : size);
+---
+
+<div class={cn(c.root, className)}>
+  {
+    align === 'split' ? (
+      <div class={c.title}>
+        {eyebrow ? <p class={c.eyebrow}>{eyebrow}</p> : null}
+        <Tag id={headingId} class={c.heading}>{heading}</Tag>
+      </div>
+    ) : (
+      <Fragment>
+        {eyebrow ? <p class={c.eyebrow}>{eyebrow}</p> : null}
+        <Tag id={headingId} class={c.heading}>{heading}</Tag>
+      </Fragment>
+    )
+  }
+  {lead ? <p class={c.lead}>{lead}</p> : null}
+</div>

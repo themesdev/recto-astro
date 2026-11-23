@@ -1,0 +1,14 @@
+---
+// A post: /blog/<slug>/.
+import type { GetStaticPaths } from 'astro';
+import PostView from '../../../views/PostView.astro';
+import { getPostSlugs } from '../../../lib/content';
+import { loadPost } from '../../../lib/views';
+
+export const getStaticPaths = (async () => (await getPostSlugs()).map(({ slug }) => ({ params: { slug } }))) satisfies GetStaticPaths;
+
+const data = await loadPost(Astro.params.slug);
+if (!data) return Astro.rewrite('/404/');
+---
+
+<PostView data={data} />

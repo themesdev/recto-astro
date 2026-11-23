@@ -1,0 +1,17 @@
+---
+// /blog/page/2/ and on. Page one is /blog/.
+import type { GetStaticPaths } from 'astro';
+import BlogView from '../../../views/BlogView.astro';
+import { getPostCount } from '../../../lib/content';
+import { loadBlogPage, pageCount } from '../../../lib/views';
+
+export const getStaticPaths = (async () => {
+  const pages = pageCount(await getPostCount());
+  return Array.from({ length: Math.max(0, pages - 1) }, (_, i) => ({ params: { page: String(i + 2) } }));
+}) satisfies GetStaticPaths;
+
+const data = await loadBlogPage(Number(Astro.params.page));
+if (!data) return Astro.rewrite('/404/');
+---
+
+<BlogView data={data} />

@@ -1,0 +1,85 @@
+---
+// Every page: the document head (title, description, canonical, Open Graph, feeds, fonts, structured data), then the
+// announcement bar, the site header, the page in <main id="main"> (the header's skip link goes there) and the footer,
+// all from the Site document. In the preview, a bar to leave it, and Sanity's visual editing (the "tools" slot).
+import '../styles/global.css';
+import { Font } from 'astro:assets';
+import Announcement from '../sections/items/sections/announcement/Announcement.astro';
+import Header from '../sections/items/sections/header/Header.astro';
+import Footer from '../sections/items/sections/footer/Footer.astro';
+import Seo from '../kit/components/Seo.astro';
+import ThemeScript from '../kit/components/ThemeScript.astro';
+import JsonLd from '../kit/components/JsonLd.astro';
+import { breadcrumbList } from '../kit/lib/schema';
+import { getSite } from '../lib/content';
+import { absolute, breadcrumbTrail, ogKey } from '../lib/seo';
+
+interface Props {
+  /** This page's address (/about/): the canonical link, and the header marks the matching link as current. */
+  path: string;
+  /** Which navigation link is current when it isn't this address (/blog/ for a post). */
+  section?: string;
+  preview?: boolean;
+  /** The page's own title; the site name is added after it (not when `fullTitle`, as on the home page). */
+  title: string;
+  description?: string | null;
+  fullTitle?: boolean;
+  /** Which Open Graph image (/og/<og>.png): by default the one for this address. */
+  og?: string;
+  type?: 'website' | 'article';
+  published?: string;
+  noindex?: boolean;
+  /** A Markdown version of the page (/blog/<slug>.md), linked as an alternate for answer engines. */
+  markdown?: string;
+  /** The page's title for its BreadcrumbList when it is nested (/blog/<post>/). */
+  crumb?: string;
+  jsonLd?: Record<string, unknown>[];
+}
+const { path, section, preview = false, title, description, fullTitle = false, og, type = 'website', published, noindex = false, markdown, crumb, jsonLd = [] } = Astro.props;
+const site = await getSite(preview);
+const fullName = fullTitle ? title : `${title} · ${site.name}`;
+const trail = crumb ? breadcrumbTrail(path, crumb) : null;
+const data = [...jsonLd, ...(trail ? [breadcrumbList(trail, Astro.site)] : [])];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <ThemeScript />
+    <Font cssVariable="--font-preset-sans" preload />
+    <Font cssVariable="--font-preset-mono" />
+    <Seo
+      title={fullName}
+      description={description ?? site.tagline}
+      canonical={absolute(path)}
+      image={{ src: `/og/${og ?? ogKey(path)}.png`, alt: fullName, width: 1200, height: 630 }}
+      type={type}
+      published={published ? new Date(published) : undefined}
+      noindex={noindex || preview}
+      siteName={site.name}
+    />
+    <meta property="og:locale" content="en_GB" />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} blog`} href={absolute('/rss.xml')} />
+    {markdown ? <link rel="alternate" type="text/markdown" href={absolute(markdown)} /> : null}
+    {data.length ? <JsonLd data={data} /> : null}
+  </head>
+  <body>
+    {site.announcement?.text ? <Announcement {...site.announcement} /> : null}
+    <Header {...site.header} currentPath={section ?? path} />
+    <main id="main"><slot /></main>
+    <Footer {...site.footer} />
+    {
+      preview ? (
+        <p class="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card px-4 py-2 text-center text-size-sm text-foreground">
+          Preview: you are seeing drafts. <a href="/api/draft-mode/disable/" class="font-medium text-primary-soft-foreground underline underline-offset-4">Leave the preview</a>
+        </p>
+      ) : null
+    }
+    {/* The preview's tools (Sanity's overlays): only the preview route fills this, so a visitor's page carries none of
+        their code or styles. */}
+    <slot name="tools" />
+  </body>
+</html>

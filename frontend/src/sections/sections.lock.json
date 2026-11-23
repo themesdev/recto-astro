@@ -1,0 +1,35 @@
+{
+  "note": "Vendored copy of the themes.dev section library (native Astro components, generated Sanity queries). Edit freely; your changes are yours.",
+  "library": "d6425af",
+  "sections": [
+    "announcement",
+    "content",
+    "cta",
+    "footer",
+    "header",
+    "hero",
+    "media",
+    "newsletter",
+    "page-header",
+    "posts",
+    "split",
+    "team"
+  ],
+  "parts": [
+    "actions",
+    "avatar",
+    "brand",
+    "breadcrumbs",
+    "code-window",
+    "copy",
+    "effects",
+    "field",
+    "icon",
+    "image",
+    "pagination",
+    "rich-text",
+    "section-head",
+    "seo",
+    "theme-switch"
+  ]
+}

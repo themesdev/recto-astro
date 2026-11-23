@@ -1,0 +1,257 @@
+/* Preset "Recto": a calm page set for reading. Geist for everything (headings, the post body, the interface) and Geist
+   Mono for code, ink on white, one deep red for links and actions, hairline rules and soft corners. Light, with a dark
+   mode on the .dark class (src/kit/components/ThemeScript.astro follows the reader's system setting).
+   modes: light dark
+   Fonts (SIL Open Font License 1.1, self-hosted with Astro's font API: frontend/astro.config.mjs › fonts): Geist,
+   Geist Mono.
+   Everything a section draws comes from the custom properties below: shadcn's colour tokens (plus the section
+   library's border-strong and primary-soft), radii, fonts, the type scale with its leading and tracking per size,
+   section spacing and the container width; the block under @media (width < 40rem) holds the phone values.
+   Design rules: white grounds (a quiet band is at most muted at 40%), no dark or saturated bands, sans everywhere, type
+   only on the scale (12 14 16 18 20 24 30 36 48 60 72 96 128 px). */
+
+:root {
+  --background: #FFFFFF;
+  --foreground: #18181B;
+  --card: #FFFFFF;
+  --card-foreground: #18181B;
+  --popover: #FFFFFF;
+  --popover-foreground: #18181B;
+  --secondary: #F4F4F5;
+  --secondary-foreground: #18181B;
+  --muted: #F4F4F5;
+  --muted-foreground: #52525B;
+  --accent: #F4F4F5;
+  --accent-foreground: #18181B;
+  --border: #E4E4E7;
+  --border-strong: #A1A1AA;
+  --input: #D4D4D8;
+  --primary: #B42318;
+  --primary-foreground: #FFFFFF;
+  --primary-soft: #FEF3F2;
+  --primary-soft-foreground: #912018;
+  --destructive: #B42318;
+  --ring: #B42318;
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-card: var(--radius-xl);
+  --radius-button: var(--radius-md);
+  --font-sans: var(--font-preset-sans), "Geist Variable", Geist, ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-mono: var(--font-preset-mono), "Geist Mono Variable", "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* The type scale. Running text (xs to lg) at 1.5; headings take the leading and tracking of their size (the table in
+     caseroom-pro docs/HERO-STANDARD.md › Type): 60px and up 1.0 / -0.03em, 40–59 1.04 / -0.024em, 28–39 1.08 /
+     -0.018em, 22–27 1.15 / -0.01em, under 22 1.25 / 0. */
+  --text-size-xs: 12px;
+  --text-size-sm: 14px;
+  --text-size-base: 18px;
+  --text-size-lg: 20px;
+  --text-size-xl: 30px;
+  --text-size-xl--lh: 1.08;
+  --text-size-xl--ls: -0.018em;
+  --text-size-2xl: 48px;
+  --text-size-2xl--lh: 1.04;
+  --text-size-2xl--ls: -0.024em;
+  --text-size-display: 60px;
+  --text-size-display--lh: 1;
+  --text-size-display--ls: -0.03em;
+  /* The home page's poster headline and the footer's wordmark, the two largest things on the site. */
+  --text-size-hero: 72px;
+  --text-size-hero--lh: 1;
+  --text-size-hero--ls: -0.03em;
+  --text-size-wordmark: 128px;
+  --text-line-height-body: 1.5;
+  --text-line-height-heading: 1.08;
+  --text-line-height-display: 1;
+  --text-weight-heading: 600;
+  --text-weight-display: 600;
+  --text-letter-spacing-heading: -0.018em;
+  --text-letter-spacing-display: -0.03em;
+  --space-section: 96px;
+  --space-gap: 32px;
+  --size-container: 1140px;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #0B0B0C;
+  --foreground: #FAFAFA;
+  --card: #141416;
+  --card-foreground: #FAFAFA;
+  --popover: #141416;
+  --popover-foreground: #FAFAFA;
+  --secondary: #1F1F23;
+  --secondary-foreground: #FAFAFA;
+  --muted: #1F1F23;
+  --muted-foreground: #A1A1AA;
+  --accent: #1F1F23;
+  --accent-foreground: #FAFAFA;
+  --border: #27272A;
+  --border-strong: #71717A;
+  --input: #3F3F46;
+  --primary: #F97066;
+  --primary-foreground: #1A0705;
+  --primary-soft: #2A1210;
+  --primary-soft-foreground: #FDA29B;
+  --destructive: #F97066;
+  --ring: #F97066;
+  color-scheme: dark;
+}
+
+@media (width < 48rem) {
+  :root {
+    --text-size-hero: 60px;
+  }
+}
+
+@media (40rem <= width < 64rem) {
+  :root {
+    --text-size-wordmark: 96px;
+  }
+}
+
+@media (width < 40rem) {
+  :root {
+    --text-size-base: 16px;
+    --text-size-lg: 18px;
+    --text-size-xl: 24px;
+    --text-size-xl--lh: 1.15;
+    --text-size-xl--ls: -0.01em;
+    --text-size-2xl: 30px;
+    --text-size-2xl--lh: 1.08;
+    --text-size-2xl--ls: -0.018em;
+    --text-size-display: 36px;
+    --text-size-display--lh: 1.08;
+    --text-size-display--ls: -0.018em;
+    --text-size-hero: 48px;
+    --text-size-hero--lh: 1.04;
+    --text-size-hero--ls: -0.024em;
+    --text-size-wordmark: 48px;
+    --space-section: 64px;
+    --space-gap: 20px;
+  }
+}
+
+/* Tones: a quiet band is the page ground with 40% of muted in it, no more. The library's inverse tone draws the same
+   light band here: this design has no dark or saturated full-width panels. */
+[data-tone='muted'],
+[data-tone='inverse'] {
+  --background: color-mix(in oklch, #F4F4F5 40%, #FFFFFF);
+  --card: #FFFFFF;
+}
+
+.dark [data-tone='muted'],
+.dark [data-tone='inverse'] {
+  --background: color-mix(in oklch, #1F1F23 40%, #0B0B0C);
+  --card: #141416;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-soft-foreground: var(--primary-soft-foreground);
+  --color-destructive: var(--destructive);
+  --color-ring: var(--ring);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-card: var(--radius-card);
+  --radius-button: var(--radius-button);
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+  --font-mono: var(--font-mono);
+  --text-size-xs: var(--text-size-xs);
+  --text-size-xs--line-height: var(--text-line-height-body);
+  --text-size-sm: var(--text-size-sm);
+  --text-size-sm--line-height: var(--text-line-height-body);
+  --text-size-base: var(--text-size-base);
+  --text-size-base--line-height: var(--text-line-height-body);
+  --text-size-lg: var(--text-size-lg);
+  --text-size-lg--line-height: var(--text-line-height-body);
+  --text-size-xl: var(--text-size-xl);
+  --text-size-xl--line-height: var(--text-size-xl--lh);
+  --text-size-xl--letter-spacing: var(--text-size-xl--ls);
+  --text-size-xl--font-weight: var(--text-weight-heading);
+  --text-size-2xl: var(--text-size-2xl);
+  --text-size-2xl--line-height: var(--text-size-2xl--lh);
+  --text-size-2xl--letter-spacing: var(--text-size-2xl--ls);
+  --text-size-2xl--font-weight: var(--text-weight-heading);
+  --text-size-display: var(--text-size-display);
+  --text-size-display--line-height: var(--text-size-display--lh);
+  --text-size-display--letter-spacing: var(--text-size-display--ls);
+  --text-size-display--font-weight: var(--text-weight-display);
+}
+
+/* Recto: what tokens can't carry. Only token colours and scale sizes; nothing here changes a section's structure. */
+@layer components {
+  :where(h1, h2, h3, h4, .font-heading) {
+    font-weight: var(--text-weight-heading);
+  }
+  /* Eyebrows (kickers): 12px capitals in the sans, in the accent, like a running head. */
+  .uppercase.tracking-wider {
+    font-family: var(--font-sans);
+    font-size: var(--text-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--primary-soft-foreground);
+  }
+  /* A hairline between sections that share a ground: the page reads as one ruled sheet. */
+  main > section:not([data-tone]) + section:not([data-tone]) {
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* The section library sizes a few things outside the scale or at touch size; these rules put them on this design's
+   standard. They are unlayered, so they win over the library's utilities without editing the vendored files. */
+/* Headings set at a running-text size (card titles, the author's name) take that size's heading leading. */
+:is(h1, h2, h3, h4, h5, h6):is(.text-size-lg, .text-size-base, .text-size-sm) {
+  line-height: 1.25;
+}
+/* The poster headline: on the scale (48, 60, 72), not the library's 1.3× and 1.6× of display. */
+[data-section='hero'][data-variant='poster'] h1 {
+  font-size: var(--text-size-hero);
+  line-height: var(--text-size-hero--lh);
+  letter-spacing: var(--text-size-hero--ls);
+  font-weight: var(--text-weight-display);
+}
+/* Its meta line and eyebrow are words, not code: the sans. Mono is for code only. */
+[data-section='hero'] .font-mono {
+  font-family: var(--font-sans);
+}
+/* The footer's wordmark: on the scale (48, 96, 128) instead of a size fitted to the container. */
+[data-section='footer'] p[aria-hidden='true'].whitespace-nowrap {
+  font-size: var(--text-size-wordmark);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: -0.18em;
+}
+/* Controls at 36px with 14px text (shadcn's default size): buttons, the header's links and menu button, inputs. */
+.s-press.min-h-11,
+input.min-h-11,
+select.min-h-11 {
+  min-height: 2.25rem;
+  font-size: var(--text-size-sm);
+}
+.s-press.min-h-11.px-5 {
+  padding-inline: 1rem;
+}

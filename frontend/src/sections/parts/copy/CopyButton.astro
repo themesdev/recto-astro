@@ -1,0 +1,31 @@
+---
+// A copy button (shared.ts): copies `text`, the [data-copy-source] in the closest [data-copy-scope] (no text), or the
+// page at `url` (Copy page). Icon only unless showLabel; the label always names it.
+import Icon from '../icon/Icon.astro';
+import { copyButtonClasses } from './shared';
+
+interface Props {
+  /** The text to copy. Leave out to copy the [data-copy-source] in the closest [data-copy-scope]. */
+  text?: string;
+  /** Fetch this address and copy its text instead (a page's Markdown). */
+  url?: string;
+  /** The button's name: Copy code, Copy command, Copy page. */
+  label: string;
+  /** Show the label beside the icon (Copy page), not only to screen readers. */
+  showLabel?: boolean;
+  class?: string;
+}
+const { text, url, label, showLabel = false, class: className } = Astro.props;
+const c = copyButtonClasses(showLabel, className);
+---
+
+<button type="button" class={c.button} data-copy={url ? undefined : (text ?? '')} data-copy-url={url}>
+  <Icon name="copy" size={16} class={c.copy} />
+  <Icon name="check" size={16} class={c.check} />
+  <span class={showLabel ? undefined : 'sr-only'}>{label}</span>
+</button>
+
+<script>
+  import { initCopy } from './shared';
+  initCopy();
+</script>

@@ -1,0 +1,11 @@
+---
+// The page document with slug "about" in the Studio. To add a page at another address, copy this folder to
+// src/pages/<address>/, change the slug and path in it, and create the page document with that slug.
+import CmsView from '../../views/CmsView.astro';
+import { loadCmsPage } from '../../lib/views';
+
+const data = await loadCmsPage('about');
+if (!data) throw new Error('No page with the slug "about": run pnpm seed, or create it in the Studio.');
+---
+
+<CmsView data={data} path="/about/" />

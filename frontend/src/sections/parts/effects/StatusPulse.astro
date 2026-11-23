@@ -1,0 +1,16 @@
+---
+// A status with a pulsing dot (live, down) or a still one (idle); the label says the status in words.
+import { statusClasses, type Status } from './shared';
+
+interface Props {
+  status?: Status;
+  label: string;
+}
+const { status = 'live', label } = Astro.props;
+const c = statusClasses(status);
+---
+
+<span class={c.root}>
+  <span class={c.dot} data-still={status === 'idle' ? '' : undefined} aria-hidden="true"></span>
+  <span>{label}</span>
+</span>

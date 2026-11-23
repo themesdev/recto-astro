@@ -1,0 +1,68 @@
+---
+// Announcement bar (item.json): one sentence and an optional link above the header; optionally dismissible, remembered
+// per text in localStorage by the script below.
+import Icon from '../../../parts/icon/Icon.astro';
+import { toneAttr } from '../../../parts/kinds';
+import { cn } from '../../../recipes/cn';
+import { announcementClasses, announcementKey } from './shared';
+import { ANNOUNCEMENT_DEFAULTS, type AnnouncementContent } from './types';
+
+export interface Props extends AnnouncementContent {
+  id?: string;
+  class?: string;
+}
+const { text, link, dismissible, variant, tone, id, class: className } = Astro.props;
+const v = variant ?? ANNOUNCEMENT_DEFAULTS.variant;
+const closable = dismissible ?? ANNOUNCEMENT_DEFAULTS.dismissible;
+const c = announcementClasses(closable);
+---
+
+<section
+  id={id}
+  data-section="announcement"
+  data-variant={v}
+  data-tone={toneAttr(tone)}
+  aria-label="Announcement"
+  class={cn(c.root, className)}
+  data-announcement={closable ? announcementKey(text) : undefined}
+>
+  <div class={c.inner}>
+    {closable ? <span class={c.spacer} aria-hidden="true" /> : null}
+    <p class={c.text}>
+      <span>{text}</span>
+      {
+        link ? (
+          <a href={link.href} class={c.link}>
+            {link.label}
+            <Icon name="arrow-right" size={16} />
+          </a>
+        ) : null
+      }
+    </p>
+    {
+      closable ? (
+        <button type="button" class={c.close} aria-label="Dismiss announcement" data-announcement-dismiss>
+          <Icon name="x" size={18} />
+        </button>
+      ) : null
+    }
+  </div>
+</section>
+
+<script>
+  import { dismissedKey } from './storage';
+  // A bar dismissed before (same text) stays hidden; the close button hides it and remembers that.
+  document.querySelectorAll<HTMLElement>('[data-announcement]').forEach((bar) => {
+    try {
+      if (localStorage.getItem(dismissedKey(bar.dataset.announcement!))) bar.hidden = true;
+    } catch {}
+  });
+  document.addEventListener('click', (e) => {
+    const bar = (e.target as Element).closest('[data-announcement-dismiss]')?.closest<HTMLElement>('[data-announcement]');
+    if (!bar) return;
+    bar.hidden = true;
+    try {
+      localStorage.setItem(dismissedKey(bar.dataset.announcement!), '1');
+    } catch {}
+  });
+</script>

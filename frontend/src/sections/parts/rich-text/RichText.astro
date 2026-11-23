@@ -1,0 +1,23 @@
+---
+// Rich text (Portable Text, parts/kinds.ts › RichText) as HTML: paragraphs, h2–h4, quotes, nested lists, strong, em,
+// inline code, links, images (with a caption: figure and figcaption), code blocks (highlighted at build time, with a
+// file name as their title) and tables. The same DOM as react/RichText.tsx (@portabletext/react): both nest the lists
+// and the marks with @portabletext/toolkit. The elements are plain: the root's .prose (site/styles/prose.css) styles
+// them, as it styles a Markdown post. Unknown types render nothing. Headings get ids (shared.ts › richTextHeadings), a
+// quote that starts with a bold Note, Tip or Warning is a callout, a paragraph of only `POST /v1/runs` an endpoint line,
+// and every code block a copy button (parts/copy).
+import { nestLists } from '@portabletext/toolkit';
+import { cn } from '../../recipes/cn';
+import type { RichText } from '../kinds';
+import RichTextNode from './RichTextNode.astro';
+import { richTextClasses, withHeadingIds } from './shared';
+
+interface Props {
+  value?: RichText | null;
+  class?: string;
+}
+const { value, class: className } = Astro.props;
+const nodes = nestLists(withHeadingIds(value), 'html');
+---
+
+<div class={cn(richTextClasses.root, className)}>{nodes.map((node) => <RichTextNode node={node} />)}</div>

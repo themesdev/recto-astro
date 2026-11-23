@@ -1,0 +1,51 @@
+---
+// The preview: every page of the site under /preview/, rendered on request in the Worker with drafts and stega, for
+// the Studio's Presentation tool. Only with the signed cookie that /api/draft-mode/enable/ sets; anyone else goes to
+// the published page. Links inside the preview stay in it (src/middleware.ts).
+import { SANITY_API_READ_TOKEN } from 'astro:env/server';
+import { VisualEditing } from '@sanity/astro/visual-editing';
+import CmsView from '../../views/CmsView.astro';
+import BlogView from '../../views/BlogView.astro';
+import PostView from '../../views/PostView.astro';
+import NotFoundView from '../../views/NotFoundView.astro';
+import { inPreview } from '../../lib/preview';
+import { loadBlogPage, loadCmsPage, loadPost } from '../../lib/views';
+
+export const prerender = false;
+
+const path = (Astro.params.path ?? '').replace(/\/+$/, '');
+if (!(await inPreview(Astro.cookies, SANITY_API_READ_TOKEN))) return Astro.redirect(`/${path ? `${path}/` : ''}`, 307);
+Astro.response.headers.set('cache-control', 'private, no-store');
+Astro.response.headers.set('x-robots-tag', 'noindex');
+
+const seg = path ? path.split('/') : [];
+// The pages built in the Studio, by address: add yours here when you add a page (README › Editing in the Studio).
+const CMS: Record<string, string> = { '': 'home', about: 'about' };
+let view: { kind: 'cms'; data: NonNullable<Awaited<ReturnType<typeof loadCmsPage>>>; path: string } | { kind: 'blog'; data: NonNullable<Awaited<ReturnType<typeof loadBlogPage>>> } | { kind: 'post'; data: NonNullable<Awaited<ReturnType<typeof loadPost>>> } | null = null;
+if (path in CMS) {
+  const data = await loadCmsPage(CMS[path], true);
+  if (data) view = { kind: 'cms', data, path: path ? `/${path}/` : '/' };
+} else if (seg[0] === 'blog' && seg.length === 1) {
+  const data = await loadBlogPage(1, true);
+  if (data) view = { kind: 'blog', data };
+} else if (seg[0] === 'blog' && seg[1] === 'page' && seg.length === 3 && /^\d+$/.test(seg[2]) && seg[2] !== '1') {
+  const data = await loadBlogPage(Number(seg[2]), true);
+  if (data) view = { kind: 'blog', data };
+} else if (seg[0] === 'blog' && seg.length === 2) {
+  const data = await loadPost(seg[1], true);
+  if (data) view = { kind: 'post', data };
+}
+if (!view) Astro.response.status = 404;
+---
+
+{
+  view?.kind === 'cms' ? (
+    <CmsView data={view.data} path={view.path} preview><VisualEditing slot="tools" enabled /></CmsView>
+  ) : view?.kind === 'blog' ? (
+    <BlogView data={view.data} preview><VisualEditing slot="tools" enabled /></BlogView>
+  ) : view?.kind === 'post' ? (
+    <PostView data={view.data} preview><VisualEditing slot="tools" enabled /></PostView>
+  ) : (
+    <NotFoundView preview><VisualEditing slot="tools" enabled /></NotFoundView>
+  )
+}

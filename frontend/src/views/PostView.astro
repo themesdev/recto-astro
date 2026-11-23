@@ -1,0 +1,107 @@
+---
+// A post: its head on the reading column (breadcrumb, topics, the title large, the lead, the byline), the cover a
+// little wider, the body (Portable Text through astro-portabletext, in the section library's prose), the author, three
+// more posts and the newsletter.
+import SiteLayout from '../components/SiteLayout.astro';
+import Breadcrumbs from '../sections/parts/breadcrumbs/Breadcrumbs.astro';
+import Posts from '../sections/items/sections/posts/Posts.astro';
+import Newsletter from '../sections/items/sections/newsletter/Newsletter.astro';
+import { container } from '../sections/recipes/section';
+import PortableText from '../kit/components/PortableText.astro';
+import Time from '../kit/components/Time.astro';
+import type { Post } from '../lib/content';
+import type { PostData } from '../lib/views';
+import { absolute } from '../lib/seo';
+
+interface Props {
+  data: PostData;
+  preview?: boolean;
+}
+const { data, preview = false } = Astro.props;
+const { post, site, more, newsletter } = data;
+const slug = post.slug;
+const author = post.author;
+const url = absolute(`/blog/${slug}/`);
+
+/** Minutes to read the body, at 230 words a minute. */
+function minutes(p: Post) {
+  const words = (p.body ?? []).flatMap((b) => ('children' in b ? b.children.map((c) => c.text) : 'code' in b ? [b.code] : [])).join(' ').split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 230));
+}
+
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.excerpt ?? undefined,
+  datePublished: new Date(post.date).toISOString(),
+  dateModified: new Date(post.date).toISOString(),
+  url,
+  mainEntityOfPage: url,
+  image: absolute(`/og/blog/${slug}.png`),
+  author: author ? { '@type': 'Person', name: author.name, jobTitle: author.role ?? undefined } : undefined,
+  publisher: { '@type': 'Organization', name: site.name, logo: { '@type': 'ImageObject', url: absolute('/favicon.svg') } },
+  keywords: post.tags?.join(', ') || undefined,
+};
+---
+
+<SiteLayout
+  path={`/blog/${slug}/`}
+  section="/blog/"
+  preview={preview}
+  title={post.title}
+  description={post.excerpt}
+  og={`blog/${slug}`}
+  type="article"
+  published={post.date}
+  markdown={`/blog/${slug}.md`}
+  crumb={post.title}
+  jsonLd={[article]}
+>
+  <article>
+    <header class={container('pt-(--space-section)')}>
+      <div class="mx-auto max-w-(--measure)">
+        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Essays', href: '/blog/' }, { label: post.title }]} />
+        {post.tags?.length ? <p class="mt-8 text-size-sm uppercase tracking-wider">{post.tags.join(' · ')}</p> : null}
+        <h1 class="mt-4 font-heading text-size-2xl text-balance sm:text-size-display">{post.title}</h1>
+        {post.excerpt ? <p class="mt-6 text-size-lg text-pretty text-muted-foreground">{post.excerpt}</p> : null}
+        <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-border pt-5 text-size-sm text-muted-foreground">
+          {
+            author ? (
+              <span class="flex items-center gap-3">
+                {author.avatar ? <img src={author.avatar.src} alt="" width={36} height={36} class="size-9 rounded-full" /> : null}
+                <span>
+                  <span class="font-medium text-foreground">{author.name}</span>
+                  {author.role ? `, ${author.role}` : null}
+                </span>
+              </span>
+            ) : null
+          }
+          <Time date={post.date} />
+          <span>{minutes(post)} min read</span>
+        </div>
+      </div>
+    </header>
+    <div class={container('pb-(--space-section)')}>
+      {post.image ? <img src={post.image.src} alt={post.image.alt} width={post.image.width} height={post.image.height} class="mx-auto mt-(--space-section) w-full max-w-5xl rounded-card border border-border" fetchpriority="high" /> : null}
+      <div class="prose mx-auto mt-(--space-section)">
+        <PortableText value={post.body ?? []} />
+      </div>
+      {
+        author ? (
+          <aside aria-label="About the author" class="mx-auto mt-(--space-section) flex max-w-(--measure) gap-5 rounded-card border border-border bg-card p-6">
+            {author.avatar ? <img src={author.avatar.src} alt="" width={64} height={64} class="size-16 shrink-0 rounded-full" loading="lazy" /> : null}
+            <div>
+              <p class="font-heading text-size-lg text-foreground">{author.name}</p>
+              {author.role ? <p class="text-size-sm text-muted-foreground">{author.role}</p> : null}
+              {author.bio ? <p class="mt-2 text-muted-foreground">{author.bio}</p> : null}
+            </div>
+          </aside>
+        ) : null
+      }
+    </div>
+  </article>
+  {more.length ? <Posts trailingSlash heading="More essays" link={{ label: 'All essays', href: '/blog/' }} posts={more} variant="grid" tone="muted" /> : null}
+  {newsletter ? <Newsletter {...newsletter} variant="card" tone="default" /> : null}
+  <slot name="tools" slot="tools" />
+</SiteLayout>

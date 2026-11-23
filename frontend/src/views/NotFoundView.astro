@@ -1,0 +1,40 @@
+---
+// The 404 page: every unknown address, and a page or post that doesn't exist.
+import SiteLayout from '../components/SiteLayout.astro';
+import PageHeader from '../sections/items/sections/page-header/PageHeader.astro';
+import { container } from '../sections/recipes/section';
+import { action } from '../sections/recipes/action';
+
+interface Props {
+  preview?: boolean;
+}
+const { preview = false } = Astro.props;
+const links = [
+  { label: 'Home', href: '/', text: 'The newest essays, and what Low Season is about.' },
+  { label: 'Essays', href: '/blog/', text: 'Everything we have published, newest first.' },
+  { label: 'About', href: '/about/', text: 'Who writes Low Season, and why.' },
+  { label: 'RSS feed', href: '/rss.xml', text: 'Follow the journal in your feed reader.' },
+];
+---
+
+<SiteLayout path="/404/" preview={preview} title="Page not found" description="This page doesn't exist, or it has moved. One of these links will probably help." og="home" noindex>
+  <PageHeader eyebrow="404" heading="This page isn’t here" lead="The address may be mistyped, or the page has moved. One of these will probably help." variant="centered" />
+  <div class={container('pb-(--space-section)')}>
+    <ul role="list" class="mx-auto grid max-w-3xl gap-(--space-gap) sm:grid-cols-2">
+      {
+        links.map((l) => (
+          <li class="rounded-card border border-border bg-card p-6">
+            <a href={l.href} class="font-heading text-size-lg text-foreground underline-offset-4 hover:underline">
+              {l.label}
+            </a>
+            <p class="mt-1 text-muted-foreground">{l.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-(--space-gap) text-center">
+      <a href="/" class={action({ emphasis: 'primary' })}>Back to the home page</a>
+    </p>
+  </div>
+  <slot name="tools" slot="tools" />
+</SiteLayout>

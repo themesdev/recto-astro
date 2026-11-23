@@ -1,0 +1,11 @@
+---
+// Soft light in the primary colours behind hero art; the parent is relative and isolate. Opacity: effect.light.opacity.
+import { cn } from '../../recipes/cn';
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<span class={cn('s-light', className)} aria-hidden="true"></span>

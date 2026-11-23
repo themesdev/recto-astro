@@ -1,0 +1,19 @@
+---
+// The brand: its logo (alt = the name) or the name in type, linking home.
+import type { ImageRef } from '../kinds';
+import { cn } from '../../recipes/cn';
+import { brandClasses as c } from './shared';
+import { srcsetAttrs } from '../image/responsive';
+
+interface Props {
+  name: string;
+  logo?: ImageRef | null;
+  href?: string | null;
+  class?: string;
+}
+const { name, logo, href, class: className } = Astro.props;
+---
+
+<a href={href ?? '/'} class={cn(c.link, className)}>
+  {logo ? <img src={logo.src} {...srcsetAttrs(logo, 'logo')} alt={name} width={logo.width} height={logo.height} class={c.logo} /> : <span>{name}</span>}
+</a>

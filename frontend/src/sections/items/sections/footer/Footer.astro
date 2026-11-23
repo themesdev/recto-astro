@@ -1,0 +1,156 @@
+---
+// Footer (item.json): brand and tagline, groups of links (columns) or one row of them (stacked), and the legal line.
+import Actions from '../../../parts/actions/Actions.astro';
+import Brand from '../../../parts/brand/Brand.astro';
+import StatusPulse from '../../../parts/effects/StatusPulse.astro';
+import SocialIcon from '../../../parts/icon/SocialIcon.astro';
+import { SOCIAL_ICONS } from '../../../parts/icon/icon-nodes';
+import { toneAttr } from '../../../parts/kinds';
+import { cn } from '../../../recipes/cn';
+import { footerClasses, socialRel } from './shared';
+import { FOOTER_DEFAULTS, type FooterContent } from './types';
+import { srcsetAttrs } from '../../../parts/image/responsive';
+
+export interface Props extends FooterContent {
+  id?: string;
+  class?: string;
+}
+const { brand, closing, contact, offices, status, visual, columns, social, legal, legalLinks, variant, tone, id, class: className } = Astro.props;
+const v = variant ?? FOOTER_DEFAULTS.variant;
+const c = footerClasses(v);
+const base = id ?? 'site-footer';
+const { tagline, ...brandLink } = brand;
+const tel = (phone: string) => `tel:${phone.replace(/[^+\d]/g, '')}`;
+---
+
+<footer id={id} data-section="footer" data-variant={v} data-tone={toneAttr(tone)} class={cn(c.root, className)}>
+  <div class={c.inner}>
+    {
+      v === 'cta' && closing ? (
+        <div class={c.closing} data-tone="accent">
+          <div class={c.closingText}>
+            <h2 class={c.closingHeading}>{closing.heading}</h2>
+            {closing.text ? <p class={c.closingLead}>{closing.text}</p> : null}
+          </div>
+          <Actions actions={closing.actions} class={c.closingActions} />
+        </div>
+      ) : null
+    }
+    {
+      v === 'editorial' && closing ? (
+        <div class={c.statement}>
+          <p class={c.statementText}>{closing.heading}</p>
+          {closing.text ? <p class={c.closingLead}>{closing.text}</p> : null}
+          <Actions actions={closing.actions} />
+        </div>
+      ) : null
+    }
+    <div class={c.top}>
+      <div class={c.brand}>
+        <Brand {...brandLink} />
+        {tagline ? <p class={c.tagline}>{tagline}</p> : null}
+        {
+          v === 'product' && status ? (
+            status.href ? (
+              <a href={status.href} class={c.status}><StatusPulse status={status.state ?? 'live'} label={status.label} /></a>
+            ) : (
+              <StatusPulse status={status.state ?? 'live'} label={status.label} />
+            )
+          ) : null
+        }
+        {
+          social?.length ? (
+            <ul role="list" aria-label="Social media" class={c.social}>
+              {social.map((s) => (
+                <li>
+                  <a href={s.url} rel={socialRel(s.platform)} class={c.socialLink}>
+                    <SocialIcon name={s.platform} />
+                    <span class="sr-only">{SOCIAL_ICONS[s.platform].title}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null
+        }
+      </div>
+      {
+        v === 'editorial' && (contact || offices?.length) ? (
+          <div class={c.contact}>
+            <h2 id={`${base}-contact`} class={c.contactTitle}>Contact</h2>
+            {contact ? (
+              <address class={c.address}>
+                {contact.email ? <a href={`mailto:${contact.email}`} class={c.contactLink}>{contact.email}</a> : null}
+                {contact.phone ? <a href={tel(contact.phone)} class={c.contactLink}>{contact.phone}</a> : null}
+                {contact.address ? contact.address.split('\n').map((line) => <span>{line}</span>) : null}
+              </address>
+            ) : null}
+            {offices?.length ? (
+              <ul role="list" aria-label="Offices" class={c.offices}>
+                {offices.map((o) => (
+                  <li class={c.office}>
+                    <span class={c.city}>{o.city}</span>
+                    {o.detail ? <span class={c.hours}>{o.detail}</span> : null}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        ) : null
+      }
+      {
+        v === 'stacked' ? (
+          columns?.length ? (
+            <nav aria-label="Footer">
+              <ul role="list" class={c.row}>
+                {columns.flatMap((col) => col.links).map((l) => (
+                  <li>
+                    <a href={l.href} class={c.link}>{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ) : null
+        ) : columns?.length ? (
+          <div class={c.groups}>
+            {columns.map((col, i) => (
+              <nav aria-labelledby={`${base}-group-${i}`} class={c.group}>
+                <h2 id={`${base}-group-${i}`} class={c.groupTitle}>{col.title}</h2>
+                <ul role="list" class={c.groupList}>
+                  {col.links.map((l) => (
+                    <li>
+                      <a href={l.href} class={c.link}>{l.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
+        ) : null
+      }
+      {
+        v === 'product' && visual ? (
+          <div class={c.visual}>
+            <img src={visual.src} {...srcsetAttrs(visual, 'thirdStacked')} alt={visual.alt} width={visual.width} height={visual.height} class={c.visualImage} loading="lazy" decoding="async" />
+          </div>
+        ) : null
+      }
+    </div>
+    <div class={c.legal}>
+      <p>{legal}</p>
+      {
+        legalLinks?.length ? (
+          <nav aria-label="Legal">
+            <ul role="list" class={c.legalList}>
+              {legalLinks.map((l) => (
+                <li>
+                  <a href={l.href} class={c.legalLink}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null
+      }
+    </div>
+    {v === 'wordmark' ? <p class={c.wordmark} style={`--wm-chars:${brand.name.length}`} aria-hidden="true">{brand.name}</p> : null}
+  </div>
+</footer>

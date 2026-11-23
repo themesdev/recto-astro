@@ -1,0 +1,20 @@
+---
+// Where the newsletter form sends people after a successful post (src/pages/api/newsletter.ts does).
+import SiteLayout from '../../components/SiteLayout.astro';
+import PageHeader from '../../sections/items/sections/page-header/PageHeader.astro';
+import Cta from '../../sections/items/sections/cta/Cta.astro';
+---
+
+<SiteLayout path="/thanks/" title="Thank you" description="Check your inbox to confirm your address. The next essay arrives on a Wednesday." og="home" noindex>
+  <PageHeader eyebrow="Subscribed" heading="Thank you, almost done" lead="We have sent you an email to confirm your address. Once you click the link in it, the next essay arrives on a Wednesday." variant="centered" />
+  <Cta
+    heading="While you wait"
+    lead="Every essay we have published is in the archive, newest first."
+    actions={[
+      { label: 'Read the essays', href: '/blog/', emphasis: 'primary' },
+      { label: 'Back to home', href: '/', emphasis: 'secondary' },
+    ]}
+    variant="row"
+    tone="muted"
+  />
+</SiteLayout>

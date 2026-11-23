@@ -1,0 +1,15 @@
+---
+// A value that updates in place (a counter, a status): the first is read; the others take turns on screen only.
+import { cn } from '../../recipes/cn';
+import { tickStyle, tickValueStyle } from './shared';
+
+interface Props {
+  values: string[];
+  class?: string;
+}
+const { values, class: className } = Astro.props;
+---
+
+<span class={cn('s-tick tabular-nums', className)} style={tickStyle(values.length)}>
+  {values.slice(0, 4).map((v, i) => <span style={tickValueStyle(i)} aria-hidden={i > 0 ? 'true' : undefined}>{v}</span>)}
+</span>

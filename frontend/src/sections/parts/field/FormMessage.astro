@@ -1,0 +1,15 @@
+---
+// The message after a submit (a status after success, an alert after an error). Its text comes from the section's
+// content; a page may pass its own in the section's message slot.
+import { cn } from '../../recipes/cn';
+import { messageClasses, messageRole, type FormStatus } from './shared';
+
+interface Props {
+  status: FormStatus;
+  id?: string;
+  class?: string;
+}
+const { status, id, class: className } = Astro.props;
+---
+
+<div id={id} role={messageRole(status)} class={cn(messageClasses(status), className)}><slot /></div>

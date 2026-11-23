@@ -1,0 +1,43 @@
+---
+// A page's sections, in order, each drawn by its native .astro component from the section library (src/sections).
+// A block the site doesn't know draws nothing. The anchor set in the Studio arrives as `id`.
+import Hero from '../sections/items/sections/hero/Hero.astro';
+import PageHeader from '../sections/items/sections/page-header/PageHeader.astro';
+import Split from '../sections/items/sections/split/Split.astro';
+import Media from '../sections/items/sections/media/Media.astro';
+import Content from '../sections/items/sections/content/Content.astro';
+import Posts from '../sections/items/sections/posts/Posts.astro';
+import Team from '../sections/items/sections/team/Team.astro';
+import Newsletter from '../sections/items/sections/newsletter/Newsletter.astro';
+import Cta from '../sections/items/sections/cta/Cta.astro';
+import type { SectionBlock } from './sections';
+
+interface Props {
+  sections?: (SectionBlock & { id?: string | null })[] | null;
+}
+const blocks = (Astro.props.sections ?? []).map(({ _type, _key, id, ...rest }) => ({ _type, key: _key, props: { ...rest, id: id ?? undefined } as any }));
+---
+
+{
+  blocks.map(({ _type, props }) =>
+    _type === 'heroSection' ? (
+      <Hero {...props} />
+    ) : _type === 'pageHeaderSection' ? (
+      <PageHeader {...props} />
+    ) : _type === 'splitSection' ? (
+      <Split {...props} />
+    ) : _type === 'mediaSection' ? (
+      <Media {...props} />
+    ) : _type === 'contentSection' ? (
+      <Content {...props} />
+    ) : _type === 'postsSection' ? (
+      <Posts {...props} />
+    ) : _type === 'teamSection' ? (
+      <Team {...props} />
+    ) : _type === 'newsletterSection' ? (
+      <Newsletter {...props} />
+    ) : _type === 'ctaSection' ? (
+      <Cta {...props} />
+    ) : null,
+  )
+}

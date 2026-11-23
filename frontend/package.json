@@ -1,0 +1,51 @@
+{
+  "name": "recto-astro-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Recto, the website: an Astro blog that reads its posts and pages from Sanity.",
+  "engines": {
+    "node": "^22.12.0 || >=24.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "typecheck": "astro check",
+    "lint": "node tools/lint.mjs",
+    "test": "node --import ./tests/resolve-ts.mjs --test tests/*.test.ts",
+    "seed": "node --env-file-if-exists=.env.local --env-file-if-exists=.env scripts/seed.mjs",
+    "deploy:cf": "astro build && wrangler deploy",
+    "favicon": "node tools/favicon.mjs"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "14.4.9",
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.4",
+    "@fontsource-variable/geist": "5.3.0",
+    "@fontsource-variable/geist-mono": "5.3.0",
+    "@fontsource/geist": "5.3.0",
+    "@portabletext/toolkit": "6.0.0",
+    "@sanity/astro": "4.1.0",
+    "@sanity/client": "8.17.0",
+    "@sanity/preview-url-secret": "4.1.5",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.4.11",
+    "astro-portabletext": "1.0.1",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "groq-js": "2.0.0",
+    "satori": "0.60.3",
+    "sharp": "0.35.5",
+    "shiki": "4.6.0",
+    "tailwind-merge": "3.7.0",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@types/node": "26.6.5",
+    "typescript": "5.9.3",
+    "wrangler": "4.164.0"
+  }
+}

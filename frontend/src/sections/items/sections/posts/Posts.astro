@@ -1,0 +1,81 @@
+---
+// Posts (item.json): blog posts as cards in a grid, a list of rows, or one large post above the rest (featured), with
+// an optional link to all posts and the page links of a blog index (parts/pagination).
+import Icon from '../../../parts/icon/Icon.astro';
+import Avatar from '../../../parts/avatar/Avatar.astro';
+import Pagination from '../../../parts/pagination/Pagination.astro';
+import SectionHead from '../../../parts/section-head/SectionHead.astro';
+import { headingId } from '../../../parts/section-head/id';
+import { spacingAttr, toneAttr } from '../../../parts/kinds';
+import type { PaginationInfo } from '../../../parts/pagination/shared';
+import { cn } from '../../../recipes/cn';
+import { formatDate, postHref, postsClasses, postImageSlot } from './shared';
+import { POSTS_DEFAULTS, type PostsContent } from './types';
+import { srcsetAttrs } from '../../../parts/image/responsive';
+
+export interface Props extends PostsContent {
+  pagination?: PaginationInfo | null;
+  /** End card links in a slash (/blog/my-post/). Default false. */
+  trailingSlash?: boolean;
+  id?: string;
+  class?: string;
+}
+const { eyebrow, heading, lead, link, basePath, posts, variant, tone, spacing, rules, pagination, trailingSlash = false, id, class: className } = Astro.props;
+const v = variant ?? POSTS_DEFAULTS.variant;
+const c = postsClasses(v, posts.length);
+const hid = heading ? headingId(heading, id) : undefined;
+const base = basePath ?? POSTS_DEFAULTS.basePath;
+const Title = heading ? 'h3' : 'h2';
+---
+
+<section id={id} data-section="posts" data-variant={v} data-tone={toneAttr(tone)} data-spacing={spacingAttr(spacing)} data-rules={rules ? '' : undefined} aria-labelledby={hid} aria-label={hid ? undefined : 'Posts'} class={cn(c.root, className)}>
+  <div class={c.inner}>
+    {
+      (heading && hid) || link ? (
+        <div class={c.top}>
+          {heading && hid ? <SectionHead eyebrow={eyebrow} heading={heading} lead={lead} headingId={hid} /> : null}
+          {link ? <a href={link.href} class={c.all}>{link.label}<Icon name="arrow-right" size={16} /></a> : null}
+        </div>
+      ) : null
+    }
+    <ul role="list" class={c.list}>
+      {
+        posts.map((p, i) => {
+          const big = v === 'featured' && i === 0;
+          return (
+            <li class={c.item(big)}>
+              <article class={c.card(big)}>
+                {p.image ? <img src={p.image.src} {...srcsetAttrs(p.image, postImageSlot(v, posts.length, big))} alt="" width={p.image.width} height={p.image.height} class={c.image} loading={i < 3 ? 'eager' : 'lazy'} decoding="async" /> : null}
+                <div class={c.body}>
+                  <Title class={c.title(big)}>
+                    <a href={postHref(base, p.slug, trailingSlash)} class={c.titleLink}>{p.title}</a>
+                  </Title>
+                  <div class={c.meta}>
+                    <time datetime={p.date}>{formatDate(p.date)}</time>
+                    {
+                      p.tags?.length ? (
+                        <ul role="list" aria-label="Tags" class={c.tags}>
+                          {p.tags.map((t) => <li class={c.tag}>{t}</li>)}
+                        </ul>
+                      ) : null
+                    }
+                  </div>
+                  {p.excerpt ? <p class={c.excerpt(big)}>{p.excerpt}</p> : null}
+                  {
+                    p.author ? (
+                      <p class={c.author}>
+                        <Avatar name={p.author.name} image={p.author.avatar} size="sm" />
+                        <span class={c.authorName}>{p.author.name}</span>
+                      </p>
+                    ) : null
+                  }
+                </div>
+              </article>
+            </li>
+          );
+        })
+      }
+    </ul>
+    {pagination ? <Pagination {...pagination} /> : null}
+  </div>
+</section>

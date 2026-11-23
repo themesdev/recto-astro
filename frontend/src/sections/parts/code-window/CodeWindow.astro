@@ -1,0 +1,27 @@
+---
+// A code window (shared.ts): a figure named by its file name, the code highlighted at build time, a copy button.
+import CopyButton from '../copy/CopyButton.astro';
+import { CODE_COPY_LABEL } from '../copy/shared';
+import { codeLanguage, highlight } from '../rich-text/code';
+import { codeWindowClasses } from './shared';
+
+interface Props {
+  code: string;
+  /** For the highlighter: ts, python, go, bash, json…; another language shows as plain text. */
+  language?: string | null;
+  /** In the title bar, and the figure's name. */
+  filename?: string | null;
+  class?: string;
+}
+const { code, language, filename, class: className } = Astro.props;
+const c = codeWindowClasses(className);
+---
+
+<figure class={c.root} data-copy-scope aria-label={filename || 'Code example'}>
+  <div class={c.bar}>
+    <span class={c.dots} aria-hidden="true"><span class={c.dot}></span><span class={c.dot}></span><span class={c.dot}></span></span>
+    <span class={c.filename}>{filename}</span>
+    <CopyButton label={CODE_COPY_LABEL} />
+  </div>
+  <pre class={c.pre} tabindex="0" data-language={codeLanguage(language) ?? 'text'} data-copy-source><code set:html={highlight(code, language)} /></pre>
+</figure>

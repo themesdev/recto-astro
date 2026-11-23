@@ -1,0 +1,45 @@
+---
+// Split (item.json): one idea told at length beside a large image; the image on the end side or the start side.
+import Actions from '../../../parts/actions/Actions.astro';
+import Icon from '../../../parts/icon/Icon.astro';
+import SectionHead from '../../../parts/section-head/SectionHead.astro';
+import { headingId } from '../../../parts/section-head/id';
+import { spacingAttr, toneAttr } from '../../../parts/kinds';
+import { BLEED_SIZES, bleedSrcset, focusStyle, srcsetAttrs } from '../../../parts/image/responsive';
+import { cn } from '../../../recipes/cn';
+import { splitClasses } from './shared';
+import { SPLIT_DEFAULTS, type SplitContent } from './types';
+
+export interface Props extends SplitContent {
+  id?: string;
+  class?: string;
+}
+const { eyebrow, heading, lead, points, actions, image, imageFocus, variant, tone, spacing, rules, id, class: className } = Astro.props;
+const v = variant ?? SPLIT_DEFAULTS.variant;
+const c = splitClasses(v);
+const hid = headingId(heading, id);
+---
+
+<section id={id} data-section="split" data-variant={v} data-tone={toneAttr(tone)} data-spacing={spacingAttr(spacing)} data-rules={rules ? '' : undefined} aria-labelledby={hid} class={cn(c.root, className)}>
+  <div class={c.inner}>
+    <div class={c.text}>
+      <SectionHead eyebrow={eyebrow} heading={heading} lead={lead} headingId={hid} />
+      {
+        points?.length ? (
+          <ul role="list" class={c.points}>
+            {points.map((p) => (
+              <li class={c.point}>
+                <Icon name="check" size={16} class={c.check} />
+                <span>{p}</span>
+              </li>
+            ))}
+          </ul>
+        ) : null
+      }
+      <Actions actions={actions} />
+    </div>
+    <div class={c.figure}>
+      <img src={image.src} {...(v === 'bleed' ? { srcset: bleedSrcset(image), sizes: BLEED_SIZES.split } : srcsetAttrs(image, 'half'))} style={focusStyle(imageFocus)} alt={image.alt} width={image.width} height={image.height} class={c.image} loading="lazy" decoding="async" />
+    </div>
+  </div>
+</section>

@@ -1,0 +1,35 @@
+---
+// A legal page shell (privacy): page header, the text itself in the prose styles and, for the demo's sample texts
+// (isSample), a notice above them that they are samples to replace. `pnpm lint` lists every page that still passes
+// isSample, and every page with placeholder copy (a span of class "placeholder"), so neither goes live unnoticed. These
+// pages are files, not Studio pages: legal text changes rarely and should be reviewed like code.
+import PageHeader from '../sections/items/sections/page-header/PageHeader.astro';
+import { container } from '../sections/recipes/section';
+import SiteLayout from './SiteLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  updated: string;
+  /** The text is the demo's sample (Low Season's), not yours: shows the notice. Remove it once the text is your own. */
+  isSample?: boolean;
+}
+const { title, description, path, updated, isSample = false } = Astro.props;
+---
+
+<SiteLayout path={path} title={title} description={description}>
+  <PageHeader breadcrumb={[{ label: 'Home', href: '/' }]} heading={title} lead={`Last updated ${updated}.`} variant="stacked" />
+  <div class={container('pb-(--space-section)')}>
+    <div class="prose">
+      {
+        isSample && (
+          <p role="note" class="rounded-card border border-border-strong bg-card p-5" data-placeholder-notice="">
+            <strong>Sample text for the theme’s demo.</strong> This page is written for Low Season, an invented journal, and is not legal advice. Replace it with the text for your own product, and have that reviewed by someone qualified for your country before you publish.
+          </p>
+        )
+      }
+      <slot />
+    </div>
+  </div>
+</SiteLayout>

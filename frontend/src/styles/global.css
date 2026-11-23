@@ -1,0 +1,16 @@
+/* The whole stylesheet. To switch the look, change the preset import (recto) here and the fonts in
+   astro.config.mjs: every colour, font, radius, size and spacing the sections use comes from them. Then run
+   `pnpm favicon` for the icon. */
+@import 'tailwindcss';
+@import '../sections/styles/theme-reset.css';
+@import './presets/recto.css';
+@import '../sections/styles/sections.css';
+@import '../sections/styles/prose.css';
+@import './prose.css';
+
+/* Tailwind builds the classes it finds in these folders. The sections keep part of their classes in recipes/ and
+   parts/: leave src/sections in here, or section padding and buttons lose their styles. */
+@source '../sections';
+@source '../components';
+@source '../pages';
+@source '../kit';

@@ -1,0 +1,21 @@
+---
+// A page built in the Studio: its sections, in order, with the page builder. The home page also carries the site's
+// Organization and WebSite structured data, and its title is used in full.
+import SiteLayout from '../components/SiteLayout.astro';
+import PageBuilder from '../components/PageBuilder.astro';
+import type { CmsData } from '../lib/views';
+import { siteJsonLd } from '../lib/seo';
+
+interface Props {
+  data: CmsData;
+  path: string;
+  preview?: boolean;
+}
+const { data, path, preview = false } = Astro.props;
+const isHome = path === '/';
+---
+
+<SiteLayout path={path} preview={preview} title={data.page.title ?? data.site.name} description={data.page.description} fullTitle={isHome} jsonLd={isHome ? [siteJsonLd(data.site)] : []}>
+  <PageBuilder sections={data.page.sections} />
+  <slot name="tools" slot="tools" />
+</SiteLayout>

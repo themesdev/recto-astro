@@ -1,0 +1,21 @@
+// Cloudflare Workers: `pnpm deploy:cf` (astro build, then wrangler deploy). README › Deploy.
+// The pages, images and files are static assets (Astro builds them into dist/client and points Wrangler at them); the
+// Worker (Astro's Cloudflare adapter) only answers the preview, the draft-mode switch and the newsletter endpoint.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "recto-site",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist/client",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "observability": { "enabled": true },
+  // Public settings. The secrets go in with `npx wrangler secret put SANITY_API_READ_TOKEN` (and FORWARD_URL); they
+  // are read at request time. PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET, SITE_URL and SANITY_STUDIO_URL are
+  // build settings: export them in the shell (or .env) when you build.
+  "vars": {}
+}

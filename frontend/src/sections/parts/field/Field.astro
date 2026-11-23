@@ -1,0 +1,51 @@
+---
+// One form field: a visible label, an optional hint (between label and control: read before typing), the control
+// (input, select or text area) and, after a failed submit, its error. The control points at the hint and the error
+// with aria-describedby and is aria-invalid while it has an error.
+import { cn } from '../../recipes/cn';
+import { describedBy, fieldClasses, fieldIds, type FieldType } from './shared';
+
+interface Props {
+  /** The form's id base (formBase). */
+  base: string;
+  /** The name the form posts. */
+  name: string;
+  label: string;
+  type?: FieldType;
+  required?: boolean;
+  /** Shown after the label of a field that isn't required. */
+  optionalText?: string;
+  autocomplete?: string;
+  value?: string | null;
+  hint?: string | null;
+  error?: string | null;
+  /** select: the choices, and the empty first one. */
+  options?: string[] | null;
+  placeholderOption?: string;
+  class?: string;
+}
+const { base, name, label, type = 'text', required = false, optionalText = 'optional', autocomplete, value, hint, error, options, placeholderOption = 'Choose one', class: className } = Astro.props;
+const ids = fieldIds(base, name);
+const c = fieldClasses(type, !!error);
+const described = describedBy(hint && ids.hint, error && ids.error);
+---
+
+<div class={cn(c.root, className)}>
+  <label for={ids.control} class={c.label}>
+    {label}{required ? null : <span class={c.optional}>{` (${optionalText})`}</span>}
+  </label>
+  {hint ? <p id={ids.hint} class={c.hint}>{hint}</p> : null}
+  {
+    type === 'textarea' ? (
+      <textarea id={ids.control} name={name} rows={5} required={required} autocomplete={autocomplete} aria-invalid={error ? 'true' : undefined} aria-describedby={described} class={c.control}>{value ?? ''}</textarea>
+    ) : type === 'select' ? (
+      <select id={ids.control} name={name} required={required} autocomplete={autocomplete} aria-invalid={error ? 'true' : undefined} aria-describedby={described} class={c.control}>
+        <option value="" selected={!value}>{placeholderOption}</option>
+        {(options ?? []).map((o) => <option value={o} selected={value === o}>{o}</option>)}
+      </select>
+    ) : (
+      <input id={ids.control} name={name} type={type} required={required} autocomplete={autocomplete} value={value || undefined} aria-invalid={error ? 'true' : undefined} aria-describedby={described} class={c.control} />
+    )
+  }
+  {error ? <p id={ids.error} class={c.error}>{error}</p> : null}
+</div>

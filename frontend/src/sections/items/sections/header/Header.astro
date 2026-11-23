@@ -1,0 +1,81 @@
+---
+// Site header (item.json): brand, navigation and buttons; below 1024px the navigation and buttons fold into a menu.
+import Actions from '../../../parts/actions/Actions.astro';
+import Brand from '../../../parts/brand/Brand.astro';
+import Icon from '../../../parts/icon/Icon.astro';
+import ThemeSwitch from '../../../parts/theme-switch/ThemeSwitch.astro';
+import { toneAttr } from '../../../parts/kinds';
+import { cn } from '../../../recipes/cn';
+import { headerClasses } from './shared';
+import { HEADER_DEFAULTS, type HeaderContent } from './types';
+
+export interface Props extends HeaderContent {
+  currentPath?: string;
+  sticky?: boolean;
+  /** A light/dark switch at the end of the bar (parts/theme-switch; put THEME_INIT in <head>). */
+  themeSwitch?: boolean;
+  id?: string;
+  class?: string;
+}
+const { brand, links, actions, variant, tone, currentPath, sticky = true, themeSwitch = false, id, class: className } = Astro.props;
+const v = variant ?? HEADER_DEFAULTS.variant;
+const c = headerClasses(v, sticky);
+const menuId = `${id ?? 'site-header'}-menu`;
+---
+
+<header id={id} data-section="header" data-variant={v} data-tone={toneAttr(tone)} class={cn(c.root, className)} data-header>
+  <a href="#main" class={c.skip}>Skip to content</a>
+  <div class={c.bar}>
+    <div class={c.brand}><Brand {...brand} /></div>
+    <button type="button" class={c.toggle} aria-expanded="false" aria-controls={menuId} data-header-toggle>
+      <Icon name="menu" size={20} class="group-aria-expanded:hidden" />
+      <Icon name="x" size={20} class="hidden group-aria-expanded:block" />
+      <span>Menu</span>
+    </button>
+    <div id={menuId} class={c.menu} data-header-menu>
+      {
+        links?.length ? (
+          <nav aria-label="Main" class={c.nav}>
+            <ul role="list" class={c.list}>
+              {links.map((l) => (
+                <li>
+                  <a href={l.href} class={c.link} aria-current={l.href === currentPath ? 'page' : undefined}>
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null
+      }
+      <Actions actions={actions} class={c.actions} />
+    </div>
+    {themeSwitch ? <ThemeSwitch class={c.theme} /> : null}
+  </div>
+</header>
+
+<script>
+  // The menu toggle below 1024px: Enter/Space or a click opens and closes it; Escape, or following a link in it, closes it.
+  const set = (header: Element, open: boolean, focus = false) => {
+    const toggle = header.querySelector<HTMLButtonElement>('[data-header-toggle]');
+    const menu = header.querySelector('[data-header-menu]');
+    if (!toggle || !menu) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    menu.toggleAttribute('data-open', open);
+    if (focus) toggle.focus();
+  };
+  document.addEventListener('click', (e) => {
+    const target = e.target as Element;
+    const toggle = target.closest('[data-header-toggle]');
+    if (toggle) {
+      set(toggle.closest('[data-header]')!, toggle.getAttribute('aria-expanded') !== 'true');
+      return;
+    }
+    const link = target.closest('[data-header-menu] a');
+    if (link) set(link.closest('[data-header]')!, false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('[data-header-toggle][aria-expanded="true"]').forEach((t) => set(t.closest('[data-header]')!, false, true));
+  });
+</script>

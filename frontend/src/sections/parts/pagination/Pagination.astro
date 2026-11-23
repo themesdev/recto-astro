@@ -1,0 +1,49 @@
+---
+// Previous, the page numbers and next, as links. The current page is marked aria-current="page"; at either end the step
+// that leads nowhere is plain text.
+import Icon from '../icon/Icon.astro';
+import { cn } from '../../recipes/cn';
+import { pageHref, pageItems, paginationClasses as c, type PaginationInfo } from './shared';
+
+interface Props extends PaginationInfo {
+  /** The landmark's name (two lists on a page need two names). */
+  label?: string;
+  previousText?: string;
+  nextText?: string;
+  class?: string;
+}
+const { label = 'Pagination', previousText = 'Previous', nextText = 'Next', class: className, ...info } = Astro.props;
+const { page, pages } = info;
+---
+
+{
+  pages > 1 ? (
+    <nav aria-label={label} class={cn(c.root, className)}>
+      <ul role="list" class={c.list}>
+        <li>
+          {page > 1 ? (
+            <a href={pageHref(info, page - 1)} rel="prev" class={c.step}><Icon name="arrow-right" size={16} class={c.prevIcon} /><span class={c.stepLabel}>{previousText}</span></a>
+          ) : (
+            <span class={c.stepOff}><Icon name="arrow-right" size={16} class={c.prevIcon} /><span class={c.stepLabel}>{previousText}</span></span>
+          )}
+        </li>
+        {pageItems(page, pages).map((n) => (
+          <li>
+            {n === 'gap' ? (
+              <span class={c.gap}>…</span>
+            ) : (
+              <a href={pageHref(info, n)} aria-label={`Page ${n}`} aria-current={n === page ? 'page' : undefined} class={c.number(n === page)}>{n}</a>
+            )}
+          </li>
+        ))}
+        <li>
+          {page < pages ? (
+            <a href={pageHref(info, page + 1)} rel="next" class={c.step}><span class={c.stepLabel}>{nextText}</span><Icon name="arrow-right" size={16} /></a>
+          ) : (
+            <span class={c.stepOff}><span class={c.stepLabel}>{nextText}</span><Icon name="arrow-right" size={16} /></span>
+          )}
+        </li>
+      </ul>
+    </nav>
+  ) : null
+}

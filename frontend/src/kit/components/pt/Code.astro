@@ -1,0 +1,23 @@
+---
+// A code block from the Studio ({ code, language, filename }, the section library's sectionCode), highlighted at build
+// time with Shiki in the preset's own colours (src/sections/parts/rich-text/code.ts › highlight), with its file name
+// and a copy button. Recto's edit of the kit's Code part: the same DOM and styles as the Next edition's code blocks
+// (figure.code-block in src/sections/styles/prose.css), so code follows the preset and dark mode.
+import type { TypedObject } from 'astro-portabletext/types';
+import CopyButton from '../../../sections/parts/copy/CopyButton.astro';
+import { CODE_COPY_LABEL } from '../../../sections/parts/copy/shared';
+import { codeLanguage, highlight } from '../../../sections/parts/rich-text/code';
+import { richTextClasses as c } from '../../../sections/parts/rich-text/shared';
+
+interface Props {
+  node: TypedObject & { code?: string; language?: string; filename?: string };
+}
+const { code = '', language, filename } = Astro.props.node;
+const html = highlight(code, language);
+---
+
+<figure class={c.codeFigure} data-copy-scope>
+  {filename ? <figcaption class={c.codeTitle}>{filename}</figcaption> : null}
+  <pre tabindex="0" data-language={codeLanguage(language) ?? 'text'} data-copy-source><code set:html={html} /></pre>
+  <CopyButton label={CODE_COPY_LABEL} class={c.codeCopy} />
+</figure>

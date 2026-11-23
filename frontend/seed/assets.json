@@ -1,0 +1,74 @@
+[
+ {
+  "ref": "seed-image:/images/home/workshop.webp",
+  "path": "/images/home/workshop.webp",
+  "width": 2048,
+  "height": 896
+ },
+ {
+  "ref": "seed-image:/images/people/ines-varga-square.webp",
+  "path": "/images/people/ines-varga-square.webp",
+  "width": 128,
+  "height": 128
+ },
+ {
+  "ref": "seed-image:/images/people/tomas-reyes-square.webp",
+  "path": "/images/people/tomas-reyes-square.webp",
+  "width": 128,
+  "height": 128
+ },
+ {
+  "ref": "seed-image:/images/people/abi-okonjo-square.webp",
+  "path": "/images/people/abi-okonjo-square.webp",
+  "width": 128,
+  "height": 128
+ },
+ {
+  "ref": "seed-image:/images/posts/a-field-guide-to-naming-things.webp",
+  "path": "/images/posts/a-field-guide-to-naming-things.webp",
+  "width": 1536,
+  "height": 864
+ },
+ {
+  "ref": "seed-image:/images/posts/fixing-the-same-chair-three-times.webp",
+  "path": "/images/posts/fixing-the-same-chair-three-times.webp",
+  "width": 1536,
+  "height": 864
+ },
+ {
+  "ref": "seed-image:/images/posts/sharpening-a-ten-minute-habit.webp",
+  "path": "/images/posts/sharpening-a-ten-minute-habit.webp",
+  "width": 1536,
+  "height": 864
+ },
+ {
+  "ref": "seed-image:/images/posts/the-case-for-a-slower-inbox.webp",
+  "path": "/images/posts/the-case-for-a-slower-inbox.webp",
+  "width": 1536,
+  "height": 864
+ },
+ {
+  "ref": "seed-image:/images/posts/the-studio-in-winter-light.webp",
+  "path": "/images/posts/the-studio-in-winter-light.webp",
+  "width": 1536,
+  "height": 864
+ },
+ {
+  "ref": "seed-image:/images/posts/what-a-paper-notebook-knows.webp",
+  "path": "/images/posts/what-a-paper-notebook-knows.webp",
+  "width": 1536,
+  "height": 864
+ },
+ {
+  "ref": "seed-image:/images/posts/why-we-stopped-keeping-a-roadmap.webp",
+  "path": "/images/posts/why-we-stopped-keeping-a-roadmap.webp",
+  "width": 1536,
+  "height": 864
+ },
+ {
+  "ref": "seed-image:/images/posts/writing-a-changelog-people-read.webp",
+  "path": "/images/posts/writing-a-changelog-people-read.webp",
+  "width": 1536,
+  "height": 864
+ }
+]

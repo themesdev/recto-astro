@@ -1,0 +1,32 @@
+---
+// Sanity's Portable Text as HTML, through astro-portabletext (the renderer Sanity recommends for Astro), with our
+// parts for headings (with ids for <Toc>), links, images and code. Wrap it in <Prose> for the type.
+// Recto: also the section library's block types (sectionCode, sectionTable), and pt/Code draws code in the preset's
+// colours; the type is the .prose column of src/sections/styles/prose.css.
+// <PortableText value={post.body} />
+// Images: the GROQ projection should give each image block { src, alt, width?, height? }, as the post model's query
+// does: body[]{ ..., _type == "image" => { "src": asset->url, alt, "width": asset->metadata.dimensions.width,
+// "height": asset->metadata.dimensions.height } }.
+import { PortableText as Render } from 'astro-portabletext';
+import Heading from './pt/Heading.astro';
+import Link from './pt/Link.astro';
+import PtImage from './pt/Image.astro';
+import PtCode from './pt/Code.astro';
+import PtTable from './pt/Table.astro';
+
+interface Props {
+  value: unknown[];
+}
+const { value } = Astro.props;
+// One slug counter per render, shared with headingsFromPortableText() through the order of the blocks.
+(Astro.locals as unknown as Record<string, unknown>).kitSlugs = new Map<string, number>();
+---
+
+<Render
+  value={value as never}
+  components={{
+    block: { h2: Heading, h3: Heading, h4: Heading },
+    mark: { link: Link },
+    type: { image: PtImage, code: PtCode, sectionCode: PtCode, sectionTable: PtTable },
+  }}
+/>

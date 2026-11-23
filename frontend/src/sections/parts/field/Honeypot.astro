@@ -1,0 +1,19 @@
+---
+// The honeypot of a form (shared.ts › HONEYPOT_NAME): a text field nobody sees, reaches with Tab or hears, and
+// autofill skips. Bots that fill every field fill it too; the handler rejects a submit in which it isn't empty.
+import { fieldIds, HONEYPOT_LABEL, honeypotClasses } from './shared';
+
+interface Props {
+  /** The form's id base (formBase). */
+  base: string;
+  /** The name it posts. */
+  name: string;
+}
+const { base, name } = Astro.props;
+const id = fieldIds(base, name).control;
+---
+
+<div aria-hidden="true" class={honeypotClasses.root}>
+  <label for={id}>{HONEYPOT_LABEL}</label>
+  <input id={id} name={name} type="text" tabindex="-1" autocomplete="off" data-1p-ignore="" data-lpignore="true" data-bwignore="" />
+</div>

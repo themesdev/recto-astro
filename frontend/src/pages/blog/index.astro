@@ -1,0 +1,10 @@
+---
+// The blog index, page one: /blog/. Later pages are /blog/page/2/ and on.
+import BlogView from '../../views/BlogView.astro';
+import { loadBlogPage } from '../../lib/views';
+
+const data = await loadBlogPage(1);
+if (!data) throw new Error('No page with the slug "blog": run pnpm seed, or create it in the Studio.');
+---
+
+<BlogView data={data} />

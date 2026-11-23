@@ -1,0 +1,25 @@
+---
+// The visual of an attribution (shared.ts): the photo (decorative: the name follows it) or a monogram tile.
+import type { ImageRef } from '../kinds';
+import { cn } from '../../recipes/cn';
+import { avatarClasses, initials, type AvatarShape, type AvatarSize } from './shared';
+import { srcsetAttrs } from '../image/responsive';
+
+interface Props {
+  name: string;
+  image?: ImageRef | null;
+  size?: AvatarSize;
+  shape?: AvatarShape;
+  class?: string;
+}
+const { name, image, size = 'md', shape = 'circle', class: className } = Astro.props;
+const c = avatarClasses(size, shape);
+---
+
+{
+  image ? (
+    <img src={image.src} {...srcsetAttrs(image, 'avatar')} alt="" width={image.width} height={image.height} class={cn(c.image, className)} loading="lazy" decoding="async" />
+  ) : (
+    <span class={cn(c.monogram, className)} aria-hidden="true">{initials(name)}</span>
+  )
+}
