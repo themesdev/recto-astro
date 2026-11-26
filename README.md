@@ -1,5 +1,7 @@
 # Recto for Astro: a blog template for Astro and Sanity
 
+**Live demo: [recto-astro.themes.dev](https://recto-astro.themes.dev/)**, this repository as it is, on its demo content.
+
 This is the Astro edition of [Recto](https://github.com/themesdev/recto), our free blog template for Next.js and
 Sanity. It has the same pages and the same Studio, so the same dataset and demo content work with both, in a lighter,
 all-sans design of its own. Posts and pages are edited in Sanity Studio, with live preview in the Presentation tool. The site is an Astro
