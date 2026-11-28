@@ -1,5 +1,19 @@
 # Recto for Astro: a blog template for Astro and Sanity
 
+<p align="center">
+  <a href="https://recto-astro.themes.dev"><img src="assets/hero.webp" alt="Recto, a free blog template for Astro and Sanity: the Low Season demo" width="100%"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/themesdev/recto-astro/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/themesdev/recto-astro?style=flat-square"></a>
+  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-black?style=flat-square"></a>
+</p>
+
+**[Live demo](https://recto-astro.themes.dev)** · [More from themes.dev](https://www.themes.dev/free/?ref=github-recto-astro) · [Free shadcn/ui blocks](https://github.com/themesdev/ui)
+
+If Recto saves you time, a star on this repo helps other people find it.
+
+
 **Live demo: [recto-astro.themes.dev](https://recto-astro.themes.dev/)**, this repository as it is, on its demo content.
 
 This is the Astro edition of [Recto](https://github.com/themesdev/recto), our free blog template for Next.js and
